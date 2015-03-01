@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE sqlMap PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN" "http://ibatis.apache.org/dtd/sql-map-2.dtd" >
+<sqlMap>
+	<typeAlias alias="ptmOverSpeed"
+		type="com.china317.gmmp.gmmp_report_analysis.bo.PtmOverSpeed" />
+	<resultMap class="ptmOverSpeed" id="ptmOverSpeedRm">
+		<result property="code" column="CODE" jdbcType="VARCHAR" />
+		<result property="license" column="LICENSE" jdbcType="VARCHAR" />
+		<result property="licenseColor" column="LICENSECOLOR" jdbcType="VARCHAR" />
+		<result property="beginTime" column="BEGINTIME" jdbcType="VARCHAR" />
+		<result property="endTIme" column="ENDTIME" jdbcType="VARCHAR" />
+		<result property="avgSpeed" column="AVGSPEED" jdbcType="NUMBER" />
+		<result property="maxSpeed" column="MAXSPEED" jdbcType="NUMBER" />
+		<result property="flag" column="FLAG" jdbcType="NUMBER" />
+		<result property="businessType" column="BUSINESSTYPE" jdbcType="NUMBER" />
+	</resultMap>
+
+	<insert id="insertintooverspeed" parameterClass="map">
+		insert all
+		<iterate conjunction=" " property="ragrouppreinsert">
+			into ALARMOVERSPEED_REA
+			(CODE,LICENSE,LICENSECOLOR,BEGINTIME,ENDTIME,AVGSPEED,MAXSPEED,FLAG,BUSINESSTYPE)
+			values
+			(
+			#ragrouppreinsert[].code#,#ragrouppreinsert[].license#,
+			#ragrouppreinsert[].licenseColor#,#ragrouppreinsert[].beginTime#,
+			#ragrouppreinsert[].endTIme#,#ragrouppreinsert[].avgSpeed#,
+			#ragrouppreinsert[].maxSpeed#,#ragrouppreinsert[].flag#,
+			#ragrouppreinsert[].businessType#
+			)
+		</iterate>
+		select * from dual
+	</insert>
+	
+	<insert id="insertBatchOverSpeed" parameterClass="map">
+		insert into ALARMOVERSPEED_REA
+			(CODE,LICENSE,LICENSECOLOR,BEGINTIME,ENDTIME,AVGSPEED,MAXSPEED,FLAG,BUSINESSTYPE)
+		values
+		select CODE,LICENSE,LICENSECOLOR,BEGINTIME,ENDTIME,AVGSPEED,MAXSPEED,FLAG,BUSINESSTYPE
+		from (
+		<iterate conjunction="union all"  property="ragrouppreinsert">
+			select
+			#ragrouppreinsert[].code#,#ragrouppreinsert[].license#,
+			#ragrouppreinsert[].licenseColor#,#ragrouppreinsert[].beginTime#,
+			#ragrouppreinsert[].endTIme#,#ragrouppreinsert[].avgSpeed#,
+			#ragrouppreinsert[].maxSpeed#,#ragrouppreinsert[].flag#,
+			#ragrouppreinsert[].businessType# from dual 
+		</iterate>
+		)
+	</insert>
+</sqlMap>
