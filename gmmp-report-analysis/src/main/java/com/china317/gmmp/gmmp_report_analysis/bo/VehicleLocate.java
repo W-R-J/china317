@@ -85,7 +85,7 @@ public class VehicleLocate implements Serializable{
 	private long illegalParkingTime = 0;
 	private long offTime;	
 	
-	private String flag;
+	private int flag;
 	// add in 2014-10-20
 	private Set<String> crossings;
 	private String crossingName;
@@ -429,12 +429,15 @@ public class VehicleLocate implements Serializable{
 			//班线车
 			if(AreaCache.matchIndex(this.ruleRsWrapSet, AreaCache.AreaIndex_Outer)!=null){
 				//在外环
+				//1为外环外 ，2为外环内.
+				this.flag = 2;
 				if(this.gpsSpeed > 70){
 					return true;
 				}else{
 					return false;
 				}
 			}else{
+				this.flag = 1;
 				if(this.gpsSpeed > 100){
 					return true;
 				}else{
@@ -539,10 +542,10 @@ public class VehicleLocate implements Serializable{
 	public void setOffTime(long offTime) {
 		this.offTime = offTime;
 	}
-	public String getFlag() {
+	public int getFlag() {
 		return flag;
 	}
-	public void setFlag(String flag) {
+	public void setFlag(int flag) {
 		this.flag = flag;
 	}
 	public Set<String> getCrossings() {

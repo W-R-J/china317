@@ -39,6 +39,13 @@ public class PtmAnalysisImp implements PtmAnalysis {
 			if(entity.isOverspeed()){
 				overspeed = new PtmOverSpeed();
 				//set Properties
+				overspeed.addSpeed(entity.getGpsSpeed());
+				overspeed.setCode(entity.getCode());
+				overspeed.setLicense(entity.getLicense());
+				overspeed.setLicenseColor(entity.getLicenseColor());
+				overspeed.setBeginTime(DateTime.getDateTimeString(entity.getGpsTime()));
+				overspeed.setFlag(entity.getFlag());
+				overspeed.setBusinessType(entity.getBusinessType());
 				overSpeedingMap.put(entity.getCode(),overspeed);
 			}else{
 				//do nothing
@@ -46,22 +53,30 @@ public class PtmAnalysisImp implements PtmAnalysis {
 		}else{
 			if(entity.isOverspeed()){
 				//更新最高速度，更新平均速度，更新结束时间
+				overspeed.addSpeed(entity.getGpsSpeed());
 			}else{
 				//报警结束，记录一条报警记录,write a record
 				log.info("[Ptm_OverSpeed_Analysis],[OverSpeedingMap.Size:]"+overSpeedingMap.size());
-				log.info("[Ptm_OverSpeed_Analysis],[overSpeedCode:]"+entity.getCode());
+				System.out.println("[Ptm_OverSpeed_Analysis],[overSpeedCode:]"+entity.getCode()+"; time"+entity.getGpsTime()+"; speed:"+entity.getGpsSpeed());
+				//overspeed.addSpeed(entity.getGpsSpeed());
+				VehicleLocate pre = lastRecordMap.get(entity.getCode());
+				if(pre != null){
+					overspeed.setEndTIme(DateTime.getDateTimeString(pre.getGpsTime()));
+				}else{
+					overspeed.setEndTIme(DateTime.getDateTimeString(entity.getGpsTime()));
+				}
+				
 				synchronized (overSpeedingMap) {
 					instance.overSpeedingMap.remove(entity.getCode());	
 				}
 				//key = code+beginTime
-				overSpeedendMap.put(entity.getCode()+overspeed, overspeed);
-				
+				overSpeedendMap.put(entity.getCode()+overspeed.getBeginTime(), overspeed);
 			}
 		}
 	}
 
 	public void nonstopAnalysis(List<VehicleLocate> list)  throws Exception{
-
+		//2-5点分析本来就有。所以不需要了。
 	}
 
 	public void offlineAnalysis(VehicleLocate entity,String yyyyMMdd) throws Exception {

@@ -13,13 +13,13 @@
 			<value>oracle.jdbc.driver.OracleDriver</value>
 		</property>
 		<property name="url">
-			<value>jdbc:oracle:thin:@192.168.200.7:1521:oracle</value>
+			<value>jdbc:oracle:thin:@218.242.7.2:29951:bus</value>
 		</property>
 		<property name="username">
 			<value>gmmp</value>
 		</property>
 		<property name="password">
-			<value>gmmp317</value>
+			<value>gmmp_317</value>
 		</property>
 		<property name="maxActive">
 			<value>100</value>
@@ -38,13 +38,13 @@
 			<value>oracle.jdbc.driver.OracleDriver</value>
 		</property>
 		<property name="url">
-			<value>jdbc:oracle:thin:@192.168.200.7:1521:oracle</value>
+			<value>jdbc:oracle:thin:@218.242.7.2:29951:bus</value>
 		</property>
 		<property name="username">
 			<value>gmmpraw</value>
 		</property>
 		<property name="password">
-			<value>gmmpraw</value>
+			<value>gmmpraw_317</value>
 		</property>
 		<property name="maxActive">
 			<value>100</value>
@@ -62,7 +62,7 @@
 			<value>oracle.jdbc.driver.OracleDriver</value>
 		</property>
 		<property name="url">
-			<value>jdbc:oracle:thin:@192.168.200.7:1521:oracle</value>
+			<value>jdbc:oracle:thin:@218.242.7.2:19951:oracle</value>
 		</property>
 		<property name="username">
 			<value>dgm</value>
@@ -86,7 +86,7 @@
 			<value>oracle.jdbc.driver.OracleDriver</value>
 		</property>
 		<property name="url">
-			<value>jdbc:oracle:thin:@192.168.200.7:1521:oracle</value>
+			<value>jdbc:oracle:thin:@218.242.7.2:19951:oracle</value>
 		</property>
 		<property name="username">
 			<value>ptm</value>
@@ -111,7 +111,7 @@
 			<value>oracle.jdbc.driver.OracleDriver</value>
 		</property>
 		<property name="url">
-			<value>jdbc:oracle:thin:@192.168.200.7:1521:oracle</value>
+			<value>jdbc:oracle:thin:@218.242.7.2:19951:oracle</value>
 		</property>
 		<property name="username">
 			<value>lybcapp</value>

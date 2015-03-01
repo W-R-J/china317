@@ -1,5 +1,8 @@
 package com.china317.gmmp.gmmp_report_analysis;
 
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -17,9 +20,11 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 import org.springframework.context.support.FileSystemXmlApplicationContext;
 
+import com.china317.gmmp.gmmp_report_analysis.bo.PtmOverSpeed;
 import com.china317.gmmp.gmmp_report_analysis.bo.Rule;
 import com.china317.gmmp.gmmp_report_analysis.bo.Vehicle;
 import com.china317.gmmp.gmmp_report_analysis.bo.VehicleLocate;
+import com.china317.gmmp.gmmp_report_analysis.dao.OverSpeedDao;
 import com.china317.gmmp.gmmp_report_analysis.dao.VehicleDao;
 import com.china317.gmmp.gmmp_report_analysis.dao.VehicleLocateDao;
 import com.china317.gmmp.gmmp_report_analysis.dao.imp.VehicleLocateDaoImp;
@@ -27,6 +32,7 @@ import com.china317.gmmp.gmmp_report_analysis.processor.AreaAddProcessor;
 import com.china317.gmmp.gmmp_report_analysis.service.PtmAnalysis;
 import com.china317.gmmp.gmmp_report_analysis.service.imp.PtmAnalysisImp;
 import com.china317.gmmp.gmmp_report_analysis.util.PolyUtilityE2;
+import com.ibatis.sqlmap.client.SqlMapClient;
 
 /**
  * Hello world!
@@ -47,8 +53,8 @@ public class App
     	if(args!=null&&args.length>1){
     		businessType=args[1];
     	}
-    	System.out.println("[classpath]"+System.getProperty("java.class.path"));//系统的classpaht路径
-    	System.out.println("[path]"+System.getProperty("user.dir"));//用户的当前路径
+    	//System.out.println("[classpath]"+System.getProperty("java.class.path"));//系统的classpaht路径
+    	//System.out.println("[path]"+System.getProperty("user.dir"));//用户的当前路径
     	log.info("[Spring init begin-------------]");
     	//ApplicationContext context = new ClassPathXmlApplicationContext(new String[]{"applicationContext.xml"});
     	ApplicationContext context = new FileSystemXmlApplicationContext("//home/gmmp/repAnalysis/bin/applicationcontext.xml");
@@ -139,7 +145,43 @@ public class App
     	}
     	
     	log.info("analysis end");
-    	
+    	OverSpeedRecordsStoreIntoDB(PtmAnalysisImp.getInstance().getOverSpeedRecords(),context);
     	log.info("[App main ended]");
     }
+    
+	private static void OverSpeedRecordsStoreIntoDB(
+			Map<String, PtmOverSpeed> overSpeedRecords, ApplicationContext context) {
+		try{
+			
+			SqlMapClient sc = (SqlMapClient) context.getBean("sqlMapClient1");
+			Connection conn = sc.getDataSource().getConnection();
+			conn.setAutoCommit(false);
+			Statement st = conn.createStatement();
+			Iterator<String> it = overSpeedRecords.keySet().iterator();
+			while(it.hasNext()){
+				String key = it.next();
+				PtmOverSpeed pos = overSpeedRecords.get(key);
+				String sql = "insert into ALARMOVERSPEED_REA "
+						+ " (CODE,LICENSE,LICENSECOLOR,BEGINTIME,ENDTIME,AVGSPEED,MAXSPEED,FLAG,BUSINESSTYPE) "
+						+ " values ("
+						+ "'" + pos.getCode() + "',"
+						+ "'" + pos.getLicense() + "',"
+						+ "'" + pos.getLicenseColor() + "',"
+						+ "'" + pos.getBeginTime() + "',"
+						+ "'" + pos.getEndTIme() + "',"
+					    + pos.getAvgSpeed() + ","
+						+ pos.getMaxSpeed() + ","
+						+ pos.getFlag() + ","
+						+ pos.getBusinessType() + ")"
+						;
+				log.info(sql);
+				st.addBatch(sql);
+			}
+			st.executeBatch();
+			conn.commit();
+			log.info("[insertIntoDB OverSpeed success!!!]");
+		}catch(Exception e){
+			e.printStackTrace();
+		}
+	}
 }
