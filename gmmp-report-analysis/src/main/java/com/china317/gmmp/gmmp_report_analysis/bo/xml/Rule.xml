@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE sqlMap PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN" "http://ibatis.apache.org/dtd/sql-map-2.dtd" >
+<sqlMap>
+	<typeAlias alias="rule"
+		type="com.china317.gmmp.gmmp_report_analysis.bo.Rule" />
+	<resultMap class="rule" id="ruleRm">
+		<result property="id" column="id" jdbcType="VARCHAR" />
+		<result property="name" column="name" jdbcType="VARCHAR" />
+		<result property="corpId" column="corp_id" jdbcType="VARCHAR" />
+		<result property="modifyId" column="modify_id" jdbcType="VARCHAR" />
+		<result property="modifyTime" column="modify_time" jdbcType="VARCHAR" />
+		<result property="ruleStatus" column="rule_status" jdbcType="NUMBER" />
+		<result property="ruleType" column="rule_type" jdbcType="NUMBER" />
+		<result property="ruleStart" column="rule_start" jdbcType="VARCHAR" />
+		<result property="ruleEnd" column="rule_end" jdbcType="VARCHAR" />
+		<result property="timeCycle" column="time_cycle" jdbcType="VARCHAR" />
+		<result property="timeCycleFirst" column="time_cycle_first" jdbcType="VARCHAR" />
+		<result property="timeCycleDay" column="time_cycle_day" jdbcType="VARCHAR" />
+		<result property="timeCycleDayStart" column="time_cycle_day_start" jdbcType="VARCHAR" />
+		<result property="timeCycleDayEnd" column="time_cycle_day_end" jdbcType="VARCHAR" />
+		<result property="remark" column="remark" jdbcType="VARCHAR" />
+		<result property="areaIn" column="area_in" jdbcType="NUMBER" />
+	</resultMap>
+
+	<select id="getAllRule" parameterClass="java.util.HashMap"
+		resultMap="ruleRm">
+		SELECT * FROM
+		TAB_RULE
+		WHERE 1=1 
+	</select>
+</sqlMap>

@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE sqlMap PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN" "http://ibatis.apache.org/dtd/sql-map-2.dtd" >
+
+<sqlMap>
+	<typeAlias alias="vehicleLocate"
+		type="com.china317.gmmp.gmmp_report_analysis.bo.VehicleLocate" />
+	<resultMap class="vehicleLocate" id="vehicleLocateRm">
+		<result property="code" column="CODE" jdbcType="VARCHAR" />
+		<result property="license" column="LICENSE" jdbcType="VARCHAR" />
+		<result property="licenseColor" column="license_color" jdbcType="VARCHAR" />
+		<result property="lon" column="lon" jdbcType="NUMBER" />
+		<result property="lat" column="lat" jdbcType="NUMBER" />
+		<result property="gpsTime" column="gps_time" jdbcType="java.util.DATE" />
+		<result property="gpsSpeed" column="gps_speed" jdbcType="NUMBER" />
+		<result property="ACCState" column="ACC_state" jdbcType="VARCHAR" />
+		<result property="platCode" column="plat_code" jdbcType="NUMBER" />
+	</resultMap>
+
+	<!-- 获得全查询列表 -->
+	<select id="getAllVehicleLocatesTest" resultMap="vehicleLocateRm">
+		SELECT * FROM
+		TRANS_VEHICLE_LOCATE WHERE ROWNUM &lt; 10
+	</select>
+
+	<!-- 轨迹 -->
+	<select id="getAllHistoryByDate" parameterClass="java.util.HashMap"
+		resultMap="vehicleLocateRm">
+		SELECT *
+		FROM
+		$tableName$
+		WHERE
+		ROWNUM &lt; 100
+	</select>
+
+	<!--轨迹 -->
+	<select id="getAllHistoryByParams" parameterClass="java.util.HashMap"
+		resultMap="vehicleLocateRm">
+		SELECT *
+		FROM
+		$tableName$
+		WHERE
+		CODE in ($codes$)
+	</select>
+</sqlMap>

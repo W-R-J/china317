@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE sqlMap PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN" "http://ibatis.apache.org/dtd/sql-map-2.dtd" >
+<sqlMap>
+	<typeAlias alias="vehicle"
+		type="com.china317.gmmp.gmmp_report_analysis.bo.Vehicle" />
+	<resultMap class="vehicle" id="vehicleRm">
+		<result property="code" column="CODE" jdbcType="VARCHAR" />
+		<result property="businessType" column="BUSINESS_TYPE" jdbcType="NUMBER" />
+	</resultMap>
+
+	<select id="getBaseVehicle" parameterClass="java.util.HashMap"
+		resultMap="vehicleRm">
+		SELECT * FROM
+		TRANS_VEHICLE_HISTORY
+		WHERE 1=1 
+		AND DELETE_FLAG = 0
+		AND TO_CHAR(TRANSADMIN_DATE,'yyyyMMdd') = '$yyyyMMdd$'
+		AND BUSINESS_TYPE = $businessType$
+		AND ROWNUM &lt; 10
+	</select>
+</sqlMap>
