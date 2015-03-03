@@ -214,6 +214,12 @@ public class DateTime {
 		Calendar c2 = getDateTime(time2);
 		return (int) ((c2.getTimeInMillis() - c1.getTimeInMillis()) / 1000);
 	}
+	
+	public static long accountTimeLong(String time1, String time2) {
+		Calendar c1 = getDateTime(time1);
+		Calendar c2 = getDateTime(time2);
+		return ((c2.getTimeInMillis() - c1.getTimeInMillis()) / 1000);
+	}
 
 	/**
 	 * ���������ʱ���,��λ������

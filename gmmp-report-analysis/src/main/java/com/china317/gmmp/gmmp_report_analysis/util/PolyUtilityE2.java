@@ -84,6 +84,40 @@ public class PolyUtilityE2 extends Thread
 		
 	}
 	
+	public static boolean isBreakTheRuleBoolean(String ruleid,double longtitude,double latitude)
+	{
+		synchronized (lock) {
+			if (lock.intValue() == 0) {
+				getRules();
+				lock = new Integer(1);
+			}
+		}
+		int ilongtitude = (int) (longtitude * 1000000);
+		int ilatitude = (int) (latitude * 1000000);
+
+		List list = (List) rules.get(ruleid);
+		if (list == null){
+			return false;
+		}
+		
+		for (int i = 0; i < list.size(); i++) {
+			RuleResultWrap pw = (RuleResultWrap) list.get(i);
+			
+			if("0".equals(pw.getIsAreaIn())){
+				if (pw.getPg().contains(ilongtitude, ilatitude) ) {
+					return true;
+					
+				}
+			}
+			if("1".equals(pw.getIsAreaIn())){
+				if (!pw.getPg().contains(ilongtitude, ilatitude)) {
+					return true;
+				}
+			}
+		}
+		return false;
+	}
+	
 	public static RuleResultWrap isBreakTheRule(String ruleid,double longtitude,double latitude)
 	{
 		synchronized (lock) {

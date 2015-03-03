@@ -447,6 +447,24 @@ public class VehicleLocate implements Serializable{
 			
 		}else if(this.businessType == 1){
 			//危险品
+			if(AreaCache.matchIndex(this.ruleRsWrapSet, AreaCache.AreaIndex_Outer)!=null){
+				//在外环
+				//1为外环外 ，2为外环内.
+				this.flag = 2;
+				if(this.gpsSpeed >= 60){
+					return true;
+				}else{
+					return false;
+				}
+			}else{
+				this.flag = 1;
+				if(this.gpsSpeed >= 80){
+					return true;
+				}else{
+					return false;
+				}
+			}
+			
 		}else if(this.businessType == 3){
 			//旅游包车
 			if(AreaCache.matchIndex(this.ruleRsWrapSet, AreaCache.AreaIndex_Outer)!=null){
