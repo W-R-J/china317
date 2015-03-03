@@ -304,6 +304,13 @@
 		</property>
 	</bean>
 	
+	<!-- Dao bean -->
+	<bean id="lineDenoterDao"
+		class="com.china317.gmmp.gmmp_report_analysis.dao.imp.LineDenoterDaoImp">
+		<property name="sqlMapClient">
+			<ref bean="sqlMapClient1" />
+		</property>
+	</bean>
 
 	<!-- ibatis抽象的Dao1 -->
 	<!-- <bean id="baseIbatisDAO1" abstract="true"> <property name="sqlMapClient"> 

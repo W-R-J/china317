@@ -2,12 +2,12 @@
 <!DOCTYPE sqlMapConfig 
 PUBLIC "-//iBATIS.com//DTD SQL Map Config 2.0//EN" 
 "http://www.ibatis.com/dtd/sql-map-config-2.dtd"> 
-<sqlMapConfig> 
-
-<sqlMap resource="com/china317/gmmp/gmmp_report_analysis/bo/xml/VehicleLocate.xml" /> 
-<sqlMap resource="com/china317/gmmp/gmmp_report_analysis/bo/xml/Vehicle.xml" /> 
-<sqlMap resource="com/china317/gmmp/gmmp_report_analysis/bo/xml/Rule.xml" />
-<sqlMap resource="com/china317/gmmp/gmmp_report_analysis/bo/xml/PtmOverSpeed.xml" />
+<sqlMapConfig>
+	<sqlMap resource="com/china317/gmmp/gmmp_report_analysis/bo/xml/VehicleLocate.xml" /> 
+	<sqlMap resource="com/china317/gmmp/gmmp_report_analysis/bo/xml/Vehicle.xml" /> 
+	<sqlMap resource="com/china317/gmmp/gmmp_report_analysis/bo/xml/Rule.xml" />
+	<sqlMap resource="com/china317/gmmp/gmmp_report_analysis/bo/xml/PtmOverSpeed.xml" />
+	<sqlMap resource="com/china317/gmmp/gmmp_report_analysis/bo/xml/LineDenoter.xml" />
 </sqlMapConfig>
 
 

@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE sqlMap PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN" "http://ibatis.apache.org/dtd/sql-map-2.dtd" >
+<sqlMap>
+	<typeAlias alias="lineDenoter"
+		type="com.china317.gmmp.gmmp_report_analysis.bo.LineDenoter"/>
+	<resultMap class="lineDenoter" id="lineDenoterRm">
+		<result property="licenseCard" column="LICENSECARD" jdbcType="VARCHAR" />
+		<result property="barCode" column="BARCODE" jdbcType="VARCHAR" />
+		<result property="denoter" column="DENOTER" jdbcType="VARCHAR" />
+		<result property="color" column="COLOR" jdbcType="VARCHAR" />
+		<result property="auditNum" column="AUDIT_NUM" jdbcType="VARCHAR" />
+		<result property="startDate" column="START_DATE" jdbcType="VARCHAR" />
+		<result property="endDate" column="END_DATE" jdbcType="VARCHAR" />
+		<result property="renter" column="RENTER" jdbcType="VARCHAR" />
+		<result property="haulier" column="HAULIER" jdbcType="VARCHAR" />
+		<result property="capacity" column="CAPACITY" jdbcType="VARCHAR" />
+		<result property="labelNumber" column="LABEL_NUMBER" jdbcType="VARCHAR" />
+		<result property="destination" column="DESTINATION" jdbcType="VARCHAR" />
+		<result property="waytTo" column="WAYTO" jdbcType="VARCHAR" />
+		<result property="labelStatus" column="LABEL_STATUS" jdbcType="VARCHAR" />
+		<result property="auditDate" column="AUDIT_DATE" jdbcType="VARCHAR" />
+	</resultMap>
+
+	<select id="getLineDenoter" parameterClass="java.util.HashMap"
+		resultMap="lineDenoterRm">
+		SELECT * FROM
+		BAOCHE_LINEDENOTER
+		WHERE 1=1
+		AND AUDIT_DATE = '$yyyyMMdd$'
+	</select>
+</sqlMap>
