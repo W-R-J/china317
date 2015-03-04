@@ -20,6 +20,8 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 import org.springframework.context.support.FileSystemXmlApplicationContext;
 
+import com.china317.gmmp.gmmp_report_analysis.bo.AlarmMore;
+import com.china317.gmmp.gmmp_report_analysis.bo.AlarmNoMark;
 import com.china317.gmmp.gmmp_report_analysis.bo.PtmOverSpeed;
 import com.china317.gmmp.gmmp_report_analysis.bo.Rule;
 import com.china317.gmmp.gmmp_report_analysis.bo.Vehicle;
@@ -378,6 +380,9 @@ public class App
         			BaocheAnalysisImp.getInstance().overSpeedAnalysis(e);
         			BaocheAnalysisImp.getInstance().offlineAnalysis(e, yyyyMMdd);
         			
+        			// 线路牌报警分析（无牌出入境、多次出入境）
+        			BaocheAnalysisImp.getInstance().xlpAlarmAnalysis(e);
+        			
         			
         			//最后更新
         			BaocheAnalysisImp.getInstance().putLastRecord(e);
@@ -392,10 +397,81 @@ public class App
     	
     	
     	log.info("analysis end");
+    	// 超速报警
     	OverSpeedRecordsStoreIntoDB(PtmAnalysisImp.getInstance().getOverSpeedRecords(),context);
+    	
+    	// 无牌出入境报警
+    	IntOutNoneRecordsStoreIntoDB(BaocheAnalysisImp.getInstance().getIniOutNoneRecords(),context);
+    	 
+    	// 多次出入境报警
+    	InOutMoreRecordsStoreIntoDB(BaocheAnalysisImp.getInstance().getIniOutMoreRecords(),context);
+    	
+    	
     	log.info("[Baoche ended]");
     
 		
+	}
+
+	private static void IntOutNoneRecordsStoreIntoDB(Map<String,AlarmNoMark> iniOutNoneRecords,
+			ApplicationContext context) {
+		try{
+			SqlMapClient sc = (SqlMapClient) context.getBean("sqlMapClientLybc");
+			Connection conn = sc.getDataSource().getConnection();
+			conn.setAutoCommit(false);
+			Statement st = conn.createStatement();
+			Iterator<String> it = iniOutNoneRecords.keySet().iterator();
+			while(it.hasNext()){
+				String key = it.next();
+				AlarmNoMark pos = iniOutNoneRecords.get(key);
+				String sql = "insert into TAB_ALARM_NOMARK "
+						+ " (LICENCE,BEGIN_TIME,END_TIME,ROAD) "
+						+ " values ("
+						+ "'" + pos.getLicense() + "',"
+						+ "'" + pos.getBeginTime() + "',"
+						+ "'" + pos.getEndTime() + "',"
+						+ "'" + pos.getRoad() + "')"
+						;
+				log.info(sql);
+				st.addBatch(sql);
+			}
+			st.executeBatch();
+			conn.commit();
+			log.info("[insertIntoDB TAB_ALARM_NOMARK success!!!]");
+		}catch(Exception e){
+			e.printStackTrace();
+		}
+	}
+
+	private static void InOutMoreRecordsStoreIntoDB(Map<String,AlarmMore> iniOutMoreRecords,
+			ApplicationContext context) {
+		try{
+			SqlMapClient sc = (SqlMapClient) context.getBean("sqlMapClientLybc");
+			Connection conn = sc.getDataSource().getConnection();
+			conn.setAutoCommit(false);
+			Statement st = conn.createStatement();
+			Iterator<String> it = iniOutMoreRecords.keySet().iterator();
+			while(it.hasNext()){
+				String key = it.next();
+				AlarmMore pos = iniOutMoreRecords.get(key);
+				String sql = "insert into TAB_ALARM_MORE "
+						+ " (LICENCE,denoter,fisrt_Time,BEGIN_TIME,END_TIME,road) "
+						+ " values ("
+						+ "'" + pos.getLicense() + "',"
+						+ "'" + pos.getDenoter() + "',"
+						+ "'" + pos.getFirstTime() + "',"
+						+ "'" + pos.getBeginTime() + "',"
+						+ "'" + pos.getEndTime() + "',"
+						+ "'" + pos.getRoad() + "')"
+						;
+				log.info(sql);
+				st.addBatch(sql);
+			}
+			st.executeBatch();
+			conn.commit();
+			log.info("[insertIntoDB TAB_ALARM_MORE success!!!]");
+		}catch(Exception e){
+			e.printStackTrace();
+		}
 	}
 
 	private static void OverSpeedRecordsStoreIntoDB(

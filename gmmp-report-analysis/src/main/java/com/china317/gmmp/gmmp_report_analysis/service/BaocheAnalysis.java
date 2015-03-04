@@ -16,15 +16,11 @@ public interface BaocheAnalysis {
 	 * @return
 	 */
 	public void nonstopAnalysis(List<VehicleLocate> list) throws Exception;
-	
+
 	/**
-	 * 多次出入境
+	 * 线路牌分析报警（无牌出入境、多次出入境）
 	 */
-	public void inOutMoreAnalysis(List<VehicleLocate> list) throws Exception;
-	/**
-	 * 无牌出入境
-	 */
-	public void inOutNoneAnalysis(List<VehicleLocate> list) throws Exception;
+	public void xlpAlarmAnalysis(VehicleLocate entity) throws Exception;
 	/**
 	 * 掉线
 	 */
