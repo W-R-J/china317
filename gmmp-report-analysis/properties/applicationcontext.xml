@@ -264,7 +264,7 @@
 
 	<!-- ibatis的工厂数据源配置Lybc -->
 	<bean id="sqlMapClientLybc" class="org.springframework.orm.ibatis.SqlMapClientFactoryBean">
-		<property name="configLocation" value="classpath:ibatisConfigLybc.xml" />这里是ibatis的sqlMap文件集合
+		<property name="configLocation" value="classpath:ibatisConfigLybc.xml" /><!--这里是ibatis的sqlMap文件集合 -->
 		<property name="dataSource" ref="dataSourceLybc" />
 	</bean>
 	<!-- Dao bean -->
