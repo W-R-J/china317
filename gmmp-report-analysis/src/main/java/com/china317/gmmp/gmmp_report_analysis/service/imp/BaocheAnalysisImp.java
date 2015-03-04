@@ -141,5 +141,17 @@ public class BaocheAnalysisImp implements BaocheAnalysis {
 	public void offlineDisAnalysis(List<VehicleLocate> list) {
 		
 	}
+	
+	
+	public int getOfflineRecordsSize(){
+		return instance.offlineMap.size();
+	}
+	
+	public int getOverSpeedRecordsSize(){
+		return instance.overSpeedendMap.size();
+	}
+	public Map<String, PtmOverSpeed> getOverSpeedRecords() {
+		return instance.overSpeedendMap;
+	}
 
 }

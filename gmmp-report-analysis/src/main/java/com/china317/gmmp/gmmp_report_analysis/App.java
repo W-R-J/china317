@@ -73,7 +73,7 @@ public class App
     	VehicleDao vehicleDao = (VehicleDao) context.getBean("vehicleDao");
     	List<Vehicle> vehs = vehicleDao.getBaseVehicleByDate(yyyyMMdd, businessType);
     	
-    	List<List<Vehicle>> list_tm = ListUtil.splitList(vehs, 17);
+    	List<List<Vehicle>> list_tm = ListUtil.splitList(vehs, 100);
     	log.info("[get baseVehicle end1---------],vehicle total:"+vehs.size());
     	log.info("[get baseVehicle end2---------],list_tm total:"+list_tm.size());
     	for(List<Vehicle> vls:list_tm){
@@ -167,6 +167,13 @@ public class App
     	analysisDgm(yyyyMMdd);
     	
     	log.info("[App ended]");
+    	
+    	log.info("[Result:]");
+    	log.info("ptm: offline:" + PtmAnalysisImp.getInstance().getOfflineRecordsSize()+"::: overspeed:"+PtmAnalysisImp.getInstance().getOverSpeedRecordsSize());
+    	
+    	log.info("lybc: offline:"+BaocheAnalysisImp.getInstance().getOfflineRecordsSize()+"::: overspeed:"+BaocheAnalysisImp.getInstance().getOverSpeedRecordsSize());
+    	
+    	log.info("dgm: fobbided:"+ DgmAnalysisImp.getInstance().getFobbidedSize()+" ::: overspeed:"+DgmAnalysisImp.getInstance().getOverSpeedRecordsSize()+"::: offline:"+DgmAnalysisImp.getInstance().getOfflineRecordsSize());
     }
     
     private static void analysisDgm(String yyyyMMdd) throws Exception{
@@ -191,7 +198,7 @@ public class App
     	VehicleDao vehicleDao = (VehicleDao) context.getBean("vehicleDao");
     	List<Vehicle> vehs = vehicleDao.getBaseVehicleByDate(yyyyMMdd, businessType);
     	
-    	List<List<Vehicle>> list_tm = ListUtil.splitList(vehs, 17);
+    	List<List<Vehicle>> list_tm = ListUtil.splitList(vehs, 100);
     	log.info("[Dgm get baseVehicle end1---------],vehicle total:"+vehs.size());
     	log.info("[Dgm get baseVehicle end2---------],list_tm total:"+list_tm.size());
     	for(List<Vehicle> vls:list_tm){
@@ -306,7 +313,7 @@ public class App
     	VehicleDao vehicleDao = (VehicleDao) context.getBean("vehicleDao");
     	List<Vehicle> vehs = vehicleDao.getBaseVehicleByDate(yyyyMMdd, businessType);
     	
-    	List<List<Vehicle>> list_tm = ListUtil.splitList(vehs, 17);
+    	List<List<Vehicle>> list_tm = ListUtil.splitList(vehs, 100);
     	log.info("[Baoche get baseVehicle end1---------],vehicle total:"+vehs.size());
     	log.info("[Baoche get baseVehicle end2---------],list_tm total:"+list_tm.size());
     	for(List<Vehicle> vls:list_tm){
@@ -384,15 +391,15 @@ public class App
         		}
         		log.info("analysis vehicle code:"+key+"OVERSPEED OFFLINE ANALYSIS end");
         		
-        		log.info("result: overspeed:"+PtmAnalysisImp.getInstance().getOverSpeedRecordsSize()
-        					+"; offline:"+PtmAnalysisImp.getInstance().getOfflineRecordsSize());
+        		log.info("result: overspeed:"+BaocheAnalysisImp.getInstance().getOverSpeedRecordsSize()
+        					+"; offline:"+BaocheAnalysisImp.getInstance().getOfflineRecordsSize());
         	}
     	}
     	
     	
     	
     	log.info("analysis end");
-    	OverSpeedRecordsStoreIntoDB(PtmAnalysisImp.getInstance().getOverSpeedRecords(),context);
+    	OverSpeedRecordsStoreIntoDB(BaocheAnalysisImp.getInstance().getOverSpeedRecords(),context);
     	log.info("[Baoche ended]");
     
 		
