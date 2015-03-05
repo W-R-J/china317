@@ -8,9 +8,15 @@ import java.util.Map;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
+import com.china317.gmmp.gmmp_report_analysis.bo.AlarmMore;
+import com.china317.gmmp.gmmp_report_analysis.bo.AlarmNoMark;
+import com.china317.gmmp.gmmp_report_analysis.bo.LineDenoter;
+import com.china317.gmmp.gmmp_report_analysis.bo.LineDenoterCount;
 import com.china317.gmmp.gmmp_report_analysis.bo.PtmOffline;
 import com.china317.gmmp.gmmp_report_analysis.bo.PtmOverSpeed;
 import com.china317.gmmp.gmmp_report_analysis.bo.VehicleLocate;
+import com.china317.gmmp.gmmp_report_analysis.cache.AreaCache;
+import com.china317.gmmp.gmmp_report_analysis.cache.LineDenoterCache;
 import com.china317.gmmp.gmmp_report_analysis.service.BaocheAnalysis;
 import com.china317.gmmp.gmmp_report_analysis.util.DateTime;
 
@@ -28,6 +34,11 @@ public class BaocheAnalysisImp implements BaocheAnalysis {
 	public static Map<String,PtmOverSpeed> overSpeedingMap = new HashMap<String, PtmOverSpeed>();
 	public static Map<String,PtmOverSpeed> overSpeedendMap = new HashMap<String, PtmOverSpeed>();
 	
+	// 无牌出入境
+		public static Map<String,AlarmNoMark> inOutNoneMap = new HashMap<String, AlarmNoMark>();
+		
+		// 多次出入境
+		public static Map<String,AlarmMore> inOutMoreMap = new HashMap<String, AlarmMore>();
 	
 	public static Map<String,VehicleLocate> lastRecordMap = new HashMap<String, VehicleLocate>();
 	public static Map<String,PtmOffline> offlineMap = new HashMap<String, PtmOffline>();
@@ -78,6 +89,66 @@ public class BaocheAnalysisImp implements BaocheAnalysis {
 			}
 		}
 	}
+	
+	/**
+	 * 线路牌报警
+	 * （无牌出入境、多次出入境）
+	 */
+	@Override
+	public void xlpAlarmAnalysis(VehicleLocate entity) {
+		VehicleLocate preEntity = lastRecordMap.get(entity.getCode());
+		if(preEntity==null){
+			 // 上次GPS没有信号，不做处理
+		} else {
+			if(AreaCache.matchIndex(preEntity.getRuleRsWrapSet(), AreaCache.AreaIndex_Domestic)==null){
+				//境外,无需判断
+			} else {
+				//境内
+				if(AreaCache.matchIndex(entity.getRuleRsWrapSet(), AreaCache.AreaIndex_Domestic)!=null){
+					//境内
+					
+				} else {
+					//境外，表示出境
+					LineDenoter lineDenoter = LineDenoterCache.getInstance().getLineDenoterByLicense(entity.getLicense());
+					if(lineDenoter != null){
+						//有线路牌，需判断多次出入境报警
+						LineDenoterCount numEntity = LineDenoterCache.getInstance().getLineDenoterNumByLabel(lineDenoter.getLabelNumber());
+						int num = numEntity!=null?numEntity.getOutNum():0;
+						if(num<1){
+							//第一次允许出境，只需累计次数和记录时间即可
+							log.info(entity.getLicense()+"当前线路牌："+lineDenoter.getLabelNumber());
+							LineDenoterCache.getInstance().addNum(lineDenoter.getLabelNumber(),entity);
+							log.info("有线路牌第一次出境");
+						} else {
+							//多次出境报警，生成记录，保存数据库
+							log.info(entity.getLicense()+"当前线路牌："+lineDenoter.getLabelNumber());
+							log.info("有线路牌多次出境");
+							LineDenoterCache.getInstance().addNum(lineDenoter.getLabelNumber(),entity);
+							
+							AlarmMore alarmMore = new AlarmMore();
+							alarmMore.setLicense(entity.getLicense());
+							alarmMore.setBeginTime(DateTime.getDateTimeString(preEntity.getGpsTime(),DateTime.PATTERN_0));
+							alarmMore.setEndTime(DateTime.getDateTimeString(entity.getGpsTime(),DateTime.PATTERN_0));
+							alarmMore.setDenoter(lineDenoter.getLabelNumber());
+							alarmMore.setFirstTime(numEntity.getFirstTime());
+							inOutMoreMap.put(alarmMore.getLicense()+"@"+alarmMore.getDenoter(), alarmMore);
+						}
+						
+					} else {
+						log.info("lybc_inOutNone_Analysis");
+						//没有线路牌，直接报未领标志牌报警,生成记录，保存数据库
+						AlarmNoMark bo = new AlarmNoMark();
+						bo.setLicense(entity.getLicense());
+						bo.setBeginTime(DateTime.getDateTimeString(entity.getGpsTime(),DateTime.PATTERN_0));
+						bo.setEndTime(DateTime.getDateTimeString(entity.getGpsTime(),DateTime.PATTERN_0));
+						bo.setRoad("");
+						inOutNoneMap.put(bo.getLicense(), bo);
+					}
+					
+				}
+			}
+		}
+	}
 
 	@Override
 	public void nonstopAnalysis(List<VehicleLocate> list) {
@@ -93,6 +164,15 @@ public class BaocheAnalysisImp implements BaocheAnalysis {
 	public void inOutNoneAnalysis(List<VehicleLocate> list) {
 		
 	}
+	
+	
+	public Map<String,AlarmNoMark> getIniOutNoneRecords() {
+		return instance.inOutNoneMap;
+	}
+	
+	public Map<String,AlarmMore>  getIniOutMoreRecords() {
+		return instance.inOutMoreMap;
+	}
 
 	@Override
 	public void offlineAnalysis(VehicleLocate entity,String yyyyMMdd) throws Exception {
@@ -106,7 +186,7 @@ public class BaocheAnalysisImp implements BaocheAnalysis {
 			Date end = entity.getGpsTime();
 			offLineTime = DateTime.accountTime3(begin, end);
 			log.info("[lybc_Offline_Analysis],[offLineTime:]"+offLineTime);
-			if(offLineTime >= 10*60*1000){
+			if(offLineTime >= 10*60){
 				PtmOffline offLine = new PtmOffline();
 				//开始时间记录为00,00,00； 结束时间为gpstime
 				//key = code + offlinebeginTIme
@@ -120,11 +200,11 @@ public class BaocheAnalysisImp implements BaocheAnalysis {
 			
 			long offLineTime = 0L;
 			//计算 gpstime时间差
-			Date begin = DateTime.parseDate(yyyyMMdd+"000000",DateTime.PATTERN_0);
+			Date begin = preEntity.getGpsTime();
 			Date end = entity.getGpsTime();
 			offLineTime = DateTime.accountTime3(begin, end);
 			log.info("[Lybc_Offline_Analysis],[offLineTime:]"+offLineTime);
-			if(offLineTime >= 10*60*1000){
+			if(offLineTime >= 10*60){
 				PtmOffline offLine = new PtmOffline();
 				//开始时间记录为preEntity的gpsTIme； 结束时间为gpstime
 				//key = code + offlinebeginTIme

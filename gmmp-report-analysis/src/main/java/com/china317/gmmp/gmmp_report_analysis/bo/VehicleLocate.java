@@ -6,6 +6,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 import com.china317.gmmp.gmmp_report_analysis.cache.AreaCache;
+import com.china317.gmmp.gmmp_report_analysis.service.imp.DgmAnalysisImp;
 
 /**
  * 轨迹对象
@@ -99,7 +100,23 @@ public class VehicleLocate implements Serializable{
 	
 	
 	Set<RuleResultWrap> ruleRsWrapSet = new HashSet<RuleResultWrap>();
+	public long flameOutTIme;
+	public long illegal_parkingTime;
 	
+	
+	
+	public long getFlameOutTIme() {
+		return flameOutTIme;
+	}
+	public void setFlameOutTIme(long flameOutTIme) {
+		this.flameOutTIme = flameOutTIme;
+	}
+	public long getIllegal_parkingTime() {
+		return illegal_parkingTime;
+	}
+	public void setIllegal_parkingTime(long illegal_parkingTime) {
+		this.illegal_parkingTime = illegal_parkingTime;
+	}
 	public String getCode() {
 		return code;
 	}
@@ -424,20 +441,24 @@ public class VehicleLocate implements Serializable{
 	public void setFlame(boolean flame) {
 		this.flame = flame;
 	}
+	public boolean isDomestic(){
+		return AreaCache.matchIndex(this.ruleRsWrapSet,AreaCache.AreaIndex_Domestic)!=null;
+	}
+	
 	public boolean isOverspeed() {
 		if(this.businessType==2){
 			//班线车
 			if(AreaCache.matchIndex(this.ruleRsWrapSet, AreaCache.AreaIndex_Outer)!=null){
 				//在外环
-				//1为外环外 ，2为外环内.
-				this.flag = 2;
-				if(this.gpsSpeed > 70){
+				//2为外环外 ，1为外环内.
+				this.flag = 1;
+				if(this.gpsSpeed > 80){
 					return true;
 				}else{
 					return false;
 				}
 			}else{
-				this.flag = 1;
+				this.flag = 2;
 				if(this.gpsSpeed > 100){
 					return true;
 				}else{
@@ -449,15 +470,15 @@ public class VehicleLocate implements Serializable{
 			//危险品
 			if(AreaCache.matchIndex(this.ruleRsWrapSet, AreaCache.AreaIndex_Outer)!=null){
 				//在外环
-				//1为外环外 ，2为外环内.
-				this.flag = 2;
+				//2为外环外 ，1为外环内.
+				this.flag = 1;
 				if(this.gpsSpeed >= 60){
 					return true;
 				}else{
 					return false;
 				}
 			}else{
-				this.flag = 1;
+				this.flag = 2;
 				if(this.gpsSpeed >= 80){
 					return true;
 				}else{
@@ -469,15 +490,15 @@ public class VehicleLocate implements Serializable{
 			//旅游包车
 			if(AreaCache.matchIndex(this.ruleRsWrapSet, AreaCache.AreaIndex_Outer)!=null){
 				//在外环
-				//1为外环外 ，2为外环内.
-				this.flag = 2;
-				if(this.gpsSpeed >= 70){
+				//2为外环外 ，1为外环内.
+				this.flag = 1;
+				if(this.gpsSpeed >= 80){
 					return true;
 				}else{
 					return false;
 				}
 			}else{
-				this.flag = 1;
+				this.flag = 2;
 				if(this.gpsSpeed >= 100){
 					return true;
 				}else{
@@ -711,6 +732,26 @@ public class VehicleLocate implements Serializable{
 		this.lonParkingBegin+""+
 		this.latParkingBegin+""+
 		this.flameOut+"";
+	}
+	public boolean isOuter() {
+		return AreaCache.matchIndex(this.ruleRsWrapSet,AreaCache.AreaIndex_Outer)!=null;
+	}
+	public boolean isOff(VehicleLocate old) {
+		long between = 0;
+		try{
+			between = this.getGpsTime().getTime()-old.getGpsTime().getTime();
+			System.out.println(between+"|||||||||||||");
+		}catch(Exception e){
+			e.printStackTrace();
+		}
+		
+		return between > DgmAnalysisImp._OffTime;
+	}
+	public boolean isWork() {
+		if(1==this.ACCState && this.getGpsSpeed() >= 10 ){
+			return true;
+		}
+		return false;
 	}
 	
 }

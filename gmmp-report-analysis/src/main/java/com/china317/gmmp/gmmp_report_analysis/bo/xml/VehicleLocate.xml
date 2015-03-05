@@ -11,6 +11,7 @@
 		<result property="lon" column="lon" jdbcType="NUMBER" />
 		<result property="lat" column="lat" jdbcType="NUMBER" />
 		<result property="gpsTime" column="gps_time" jdbcType="java.util.DATE" />
+		<result property="getTime" column="get_time" jdbcType="java.util.DATE" />
 		<result property="gpsSpeed" column="gps_speed" jdbcType="NUMBER" />
 		<result property="ACCState" column="ACC_state" jdbcType="VARCHAR" />
 		<result property="platCode" column="plat_code" jdbcType="NUMBER" />

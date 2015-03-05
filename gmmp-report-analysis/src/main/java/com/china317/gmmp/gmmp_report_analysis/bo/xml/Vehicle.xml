@@ -16,5 +16,8 @@
 		AND DELETE_FLAG = 0
 		AND TO_CHAR(TRANSADMIN_DATE,'yyyyMMdd') = '$yyyyMMdd$'
 		AND BUSINESS_TYPE = $businessType$
+		
+		
 	</select>
+	<!-- AND ROWNUM &lt; 500 -->
 </sqlMap>

@@ -93,7 +93,7 @@ public class PtmAnalysisImp implements PtmAnalysis {
 			Date end = entity.getGpsTime();
 			offLineTime = DateTime.accountTime3(begin, end);
 			log.info("[Ptm_Offline_Analysis],[offLineTime:]"+offLineTime);
-			if(offLineTime >= 10*60*1000){
+			if(offLineTime >= 10*60){
 				PtmOffline offLine = new PtmOffline();
 				//开始时间记录为00,00,00； 结束时间为gpstime
 				//key = code + offlinebeginTIme
@@ -107,11 +107,11 @@ public class PtmAnalysisImp implements PtmAnalysis {
 			
 			long offLineTime = 0L;
 			//计算 gpstime时间差
-			Date begin = DateTime.parseDate(yyyyMMdd+"000000",DateTime.PATTERN_0);
+			Date begin = preEntity.getGpsTime();
 			Date end = entity.getGpsTime();
 			offLineTime = DateTime.accountTime3(begin, end);
 			log.info("[Ptm_Offline_Analysis],[offLineTime:]"+offLineTime);
-			if(offLineTime >= 10*60*1000){
+			if(offLineTime >= 10*60){
 				PtmOffline offLine = new PtmOffline();
 				//开始时间记录为preEntity的gpsTIme； 结束时间为gpstime
 				//key = code + offlinebeginTIme

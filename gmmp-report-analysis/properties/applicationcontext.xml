@@ -111,13 +111,13 @@
 			<value>oracle.jdbc.driver.OracleDriver</value>
 		</property>
 		<property name="url">
-			<value>jdbc:oracle:thin:@192.168.200.7:1521:oracle</value>
+			<value>jdbc:oracle:thin:@192.168.200.11:3521:jtg</value>
 		</property>
 		<property name="username">
-			<value>lybcapp</value>
+			<value>ptm</value>
 		</property>
 		<property name="password">
-			<value>lybcapp_317</value>
+			<value>ptm_317</value>
 		</property>
 		<property name="maxActive">
 			<value>100</value>
@@ -263,10 +263,10 @@
 	</bean> -->
 
 	<!-- ibatis的工厂数据源配置Lybc -->
-	<!-- <bean id="sqlMapClientLybc" class="org.springframework.orm.ibatis.SqlMapClientFactoryBean">
-		<property name="configLocation" value="classpath:ibatisConfigLybc.xml" />这里是ibatis的sqlMap文件集合
+	<bean id="sqlMapClientLybc" class="org.springframework.orm.ibatis.SqlMapClientFactoryBean">
+		<property name="configLocation" value="classpath:ibatisConfig.xml" />
 		<property name="dataSource" ref="dataSourceLybc" />
-	</bean> -->
+	</bean>
 	<!-- Dao bean -->
 	<bean id="ruleDao"
 		class="com.china317.gmmp.gmmp_report_analysis.dao.imp.RuleDaoImp">
