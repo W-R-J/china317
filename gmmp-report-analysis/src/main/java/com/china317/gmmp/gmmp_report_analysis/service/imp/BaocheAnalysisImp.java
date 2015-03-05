@@ -111,7 +111,7 @@ public class BaocheAnalysisImp implements BaocheAnalysis {
 				return;
 			} else {
 				//境内
-				if(AreaCache.matchIndex(preEntity.getRuleRsWrapSet(), AreaCache.AreaIndex_Domestic)!=null){
+				if(AreaCache.matchIndex(entity.getRuleRsWrapSet(), AreaCache.AreaIndex_Domestic)!=null){
 					//境内
 					return;
 				} else {
@@ -146,7 +146,7 @@ public class BaocheAnalysisImp implements BaocheAnalysis {
 						//没有线路牌，直接报未领标志牌报警,生成记录，保存数据库
 						AlarmNoMark bo = new AlarmNoMark();
 						bo.setLicense(entity.getLicense());
-						bo.setBeginTime(DateTime.getDateTimeString(entity.getGpsTime(),DateTime.PATTERN_0));
+						bo.setBeginTime(DateTime.getDateTimeString(preEntity.getGpsTime(),DateTime.PATTERN_0));
 						bo.setEndTime(DateTime.getDateTimeString(entity.getGpsTime(),DateTime.PATTERN_0));
 						bo.setRoad("");
 						inOutNoneMap.put(bo.getLicense(), bo);
