@@ -83,7 +83,7 @@ public class DgmAnalysisImp implements DgmAnalysis{
 	
 	@Override
 	public void overSpeedAnalysis(VehicleLocate entity) {
-		
+		try{
 		if(!Arrays.asList(hasLicenseOfOverspeed).contains(entity.getLicense())){
 			
 			PtmOverSpeed overspeed = instance.overSpeedingMap.get(entity.getCode());
@@ -108,8 +108,8 @@ public class DgmAnalysisImp implements DgmAnalysis{
 					overspeed.addSpeed(entity.getGpsSpeed());
 				}else{
 					//报警结束，记录一条报警记录,write a record
-					log.info("[Dgm_OverSpeed_Analysis],[OverSpeedingMap.Size:]"+overSpeedingMap.size());
-					System.out.println("[Dgm_OverSpeed_Analysis],[overSpeedCode:]"+entity.getCode()+"; time"+entity.getGpsTime()+"; speed:"+entity.getGpsSpeed());
+					//log.info("[Dgm_OverSpeed_Analysis],[OverSpeedingMap.Size:]"+overSpeedingMap.size());
+					//System.out.println("[Dgm_OverSpeed_Analysis],[overSpeedCode:]"+entity.getCode()+"; time"+entity.getGpsTime()+"; speed:"+entity.getGpsSpeed());
 					//overspeed.addSpeed(entity.getGpsSpeed());
 					VehicleLocate pre = lastRecordMap.get(entity.getCode());
 					if(pre != null){
@@ -127,7 +127,7 @@ public class DgmAnalysisImp implements DgmAnalysis{
 					
 					if(overspeed.getFlag()==1){
 						if(overspeed.getMaxSpeed() >=80){
-							overSpeedendMap.put(entity.getCode()+overspeed.getBeginTime(), overspeed);
+							//overSpeedendMap.put(entity.getCode()+overspeed.getBeginTime(), overspeed);
 						}
 						if(overspeed.getMaxSpeed() >=60 
 								&& overspeed.getMaxSpeed() <=80
@@ -155,11 +155,14 @@ public class DgmAnalysisImp implements DgmAnalysis{
 			}
 		
 		}//end licenseOfOverSpeed
+		}catch(Exception e){
+			e.printStackTrace();
+		}
 	}
 
 	@Override
-	public void offlineAnalysis(VehicleLocate entity, String yyyyMMdd) throws Exception {
-		
+	public void offlineAnalysis(VehicleLocate entity, String yyyyMMdd) {
+		try{
 		VehicleLocate preEntity = lastRecordMap.get(entity.getCode());
 		if(preEntity==null){
 			//与0点进行比较，如果gpsTime超过10min，记录一条从0点开始的掉线记录
@@ -173,8 +176,8 @@ public class DgmAnalysisImp implements DgmAnalysis{
 				//开始时间记录为00,00,00； 结束时间为gpstime
 				//key = code + offlinebeginTIme
 				instance.offlineMap.put(entity.getCode()+"", offLine);
-				log.info("[Dgm_Offline_Analysis],[offlineMap.Size:]"+offlineMap.size());
-				log.info("[Dgm_Offline_Analysis],[offlineCode:]"+entity.getCode());
+				//log.info("[Dgm_Offline_Analysis],[offlineMap.Size:]"+offlineMap.size());
+				//log.info("[Dgm_Offline_Analysis],[offlineCode:]"+entity.getCode());
 				
 			}
 			
@@ -191,18 +194,21 @@ public class DgmAnalysisImp implements DgmAnalysis{
 				//开始时间记录为preEntity的gpsTIme； 结束时间为gpstime
 				//key = code + offlinebeginTIme
 				instance.offlineMap.put(entity.getCode()+"", offLine);
-				log.info("[Dgm_Offline_Analysis],[offlineMap.Size:]"+offlineMap.size());
-				log.info("[Dgm_Offline_Analysis],[offlineCode:]"+entity.getCode());
+				//log.info("[Dgm_Offline_Analysis],[offlineMap.Size:]"+offlineMap.size());
+				//log.info("[Dgm_Offline_Analysis],[offlineCode:]"+entity.getCode());
 			}
 			
 		}
-		
+		}catch(Exception e){
+			e.printStackTrace();
+		}
 	}
 	@Override
 	/**
 	 * 禁入区域报警分析
 	 */
 	public void fobiddenAnalysis(VehicleLocate e,int index,int size,String yyyyMMdd) {
+		try{
 		/********************************************/
 		//长江隧桥
 		if(!Arrays.asList(hasLicenseOfCJSQ).contains(e.getLicense())){
@@ -454,11 +460,14 @@ public class DgmAnalysisImp implements DgmAnalysis{
 		}catch(Exception ex){
 			ex.printStackTrace();
 		}
+		}catch(Exception e2){
+			e2.printStackTrace();
+		}
 	}
 	
 	@Override
 	public void illegalInOutAnalysis(VehicleLocate e) {
-		
+		try{
 		VehicleLocate old = lastRecordMap.get(e.getCode());
 		if(old!=null){
 			if(e.isDomestic() && !old.isDomestic()){
@@ -468,7 +477,7 @@ public class DgmAnalysisImp implements DgmAnalysis{
 					exit.setCode(e.getCode());
 					exit.setBegin_time(DateTime.getDateTimeString(old.getGpsTime()));
 					exit.setEnd_time(DateTime.getDateTimeString(e.getGpsTime()));
-					exit.setDetail("入境");
+					exit.setDetail("入沪");
 					illegalExitMap.put(exit.getCode()+exit.getBegin_time(), exit);
 				}
 			}else if(!e.isDomestic() && old.isDomestic()){
@@ -478,12 +487,14 @@ public class DgmAnalysisImp implements DgmAnalysis{
 					exit.setCode(e.getCode());
 					exit.setBegin_time(DateTime.getDateTimeString(old.getGpsTime()));
 					exit.setEnd_time(DateTime.getDateTimeString(e.getGpsTime()));
-					exit.setDetail("出境");
+					exit.setDetail("出沪");
 					illegalExitMap.put(exit.getCode()+exit.getBegin_time(), exit);
 				}
 			}
 		}
-		
+		}catch(Exception ez){
+			ez.printStackTrace();
+		}
 	}
 	private boolean inEntryExit(VehicleLocate e, VehicleLocate old) {
 		
@@ -595,6 +606,7 @@ public class DgmAnalysisImp implements DgmAnalysis{
 			DgmIllegalParking ill = null;
 			if(illegalParkingMap.get(e.getCode())==null){
 				ill = new DgmIllegalParking();
+				ill.setBeginTime(e.getZeroSpeedBegin());
 				ill.setCode(e.getCode());
 				ill.setType(String.valueOf(e.getOffType()));
 				ill.setFlag("0");
@@ -905,6 +917,7 @@ public class DgmAnalysisImp implements DgmAnalysis{
 	@Override
 	public void fatigueAnalysis(List<VehicleLocate> list, String yyyyMMdd)
 			throws Exception {
+		log.info("fatigueAnalysis begin");
 		try{
 		//&& num < 30){
 		//VehiclePO vehicle = VehicleCache.getVeh("15000902549");
@@ -1140,6 +1153,22 @@ public class DgmAnalysisImp implements DgmAnalysis{
 		}catch(Exception ex){
 			ex.printStackTrace();
 		}
+	}
+	public void clear() {
+		//
+		log.info("clear all map called");
+		overSpeedendMap.clear();// = new HashMap<String, PtmOverSpeed>();
+		
+		
+		offlineMap.clear();// = new HashMap<String, PtmOffline>();
+		
+		forbiddenedMap.clear();// = new HashMap<String,DgmForbidden>();
+		
+		illegalExitMap.clear();// = new HashMap<String, DgmEntryExit>();
+		
+		illegalParkingMap.clear();// = new HashMap<String,DgmIllegalParking>();
+		
+		fatigueAlarmMap.clear();// = new HashMap<String, FatigueAlarmEntity>();
 	}
 		
 		

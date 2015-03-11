@@ -48,7 +48,8 @@ public class BaocheAnalysisImp implements BaocheAnalysis {
 	}
 	
 	@Override
-	public void overSpeedAnalysis(VehicleLocate entity)  throws Exception{
+	public void overSpeedAnalysis(VehicleLocate entity) {
+		try{
 		PtmOverSpeed overspeed = instance.overSpeedingMap.get(entity.getCode());
 		if(overspeed==null){
 			if(entity.isOverspeed()){
@@ -88,6 +89,9 @@ public class BaocheAnalysisImp implements BaocheAnalysis {
 				overSpeedendMap.put(entity.getCode()+overspeed.getBeginTime(), overspeed);
 			}
 		}
+		}catch(Exception e){
+			e.printStackTrace();
+		}
 	}
 	
 	/**
@@ -96,6 +100,7 @@ public class BaocheAnalysisImp implements BaocheAnalysis {
 	 */
 	@Override
 	public void xlpAlarmAnalysis(VehicleLocate entity) {
+		try{
 		VehicleLocate preEntity = lastRecordMap.get(entity.getCode());
 		if(preEntity==null){
 			 // 上次GPS没有信号，不做处理
@@ -148,6 +153,9 @@ public class BaocheAnalysisImp implements BaocheAnalysis {
 				}
 			}
 		}
+		}catch(Exception e){
+			e.printStackTrace();
+		}
 	}
 
 	@Override
@@ -167,11 +175,11 @@ public class BaocheAnalysisImp implements BaocheAnalysis {
 	
 	
 	public Map<String,AlarmNoMark> getIniOutNoneRecords() {
-		return instance.inOutNoneMap;
+		return inOutNoneMap;
 	}
 	
 	public Map<String,AlarmMore>  getIniOutMoreRecords() {
-		return instance.inOutMoreMap;
+		return inOutMoreMap;
 	}
 
 	@Override
@@ -231,7 +239,8 @@ public class BaocheAnalysisImp implements BaocheAnalysis {
 		return instance.overSpeedendMap.size();
 	}
 	public Map<String, PtmOverSpeed> getOverSpeedRecords() {
-		return instance.overSpeedendMap;
+		return overSpeedendMap;
 	}
+	public void clear() {}
 
 }

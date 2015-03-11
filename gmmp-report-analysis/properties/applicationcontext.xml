@@ -62,13 +62,13 @@
 			<value>oracle.jdbc.driver.OracleDriver</value>
 		</property>
 		<property name="url">
-			<value>jdbc:oracle:thin:@192.168.200.7:1521:oracle</value>
+			<value>jdbc:oracle:thin:@192.168.200.11:3521:jtg</value>
 		</property>
 		<property name="username">
 			<value>dgm</value>
 		</property>
 		<property name="password">
-			<value>dgm_china317_com</value>
+			<value>dgm_317</value>
 		</property>
 		<property name="maxActive">
 			<value>100</value>
@@ -86,13 +86,13 @@
 			<value>oracle.jdbc.driver.OracleDriver</value>
 		</property>
 		<property name="url">
-			<value>jdbc:oracle:thin:@192.168.200.7:1521:oracle</value>
+			<value>jdbc:oracle:thin:@192.168.200.11:3521:jtg</value>
 		</property>
 		<property name="username">
-			<value>ptm</value>
+			<value>banche</value>
 		</property>
 		<property name="password">
-			<value>ptm057</value>
+			<value>banche_317</value>
 		</property>
 		<property name="maxActive">
 			<value>100</value>
@@ -257,11 +257,11 @@
 	</bean>
 
 	<!-- ibatis的工厂数据源配置Ptm -->
-	<!-- <bean id="sqlMapClientPtm" class="org.springframework.orm.ibatis.SqlMapClientFactoryBean">
-		<property name="configLocation" value="classpath:ibatisConfigPtm.xml" />这里是ibatis的sqlMap文件集合
+	<bean id="sqlMapClientPtm" class="org.springframework.orm.ibatis.SqlMapClientFactoryBean">
+		<property name="configLocation" value="classpath:ibatisConfig.xml" />
 		<property name="dataSource" ref="dataSourcePtm" />
-	</bean> -->
-
+	</bean> 
+	
 	<!-- ibatis的工厂数据源配置Lybc -->
 	<bean id="sqlMapClientLybc" class="org.springframework.orm.ibatis.SqlMapClientFactoryBean">
 		<property name="configLocation" value="classpath:ibatisConfig.xml" />

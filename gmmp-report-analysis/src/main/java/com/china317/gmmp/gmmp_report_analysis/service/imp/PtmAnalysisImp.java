@@ -2,8 +2,10 @@ package com.china317.gmmp.gmmp_report_analysis.service.imp;
 
 import java.util.Date;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.LinkedBlockingQueue;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -17,6 +19,7 @@ import com.china317.gmmp.gmmp_report_analysis.util.DateTime;
 public class PtmAnalysisImp implements PtmAnalysis {
 
 	private static final Log log = LogFactory.getLog(PtmAnalysisImp.class);
+	
 	private static PtmAnalysisImp instance = new PtmAnalysisImp();
 	private PtmAnalysisImp(){
 		
@@ -28,15 +31,20 @@ public class PtmAnalysisImp implements PtmAnalysis {
 	public static Map<String,PtmOverSpeed> overSpeedingMap = new HashMap<String, PtmOverSpeed>();
 	public static Map<String,PtmOverSpeed> overSpeedendMap = new HashMap<String, PtmOverSpeed>();
 	
-	
 	public static Map<String,VehicleLocate> lastRecordMap = new HashMap<String, VehicleLocate>();
 	public static Map<String,PtmOffline> offlineMap = new HashMap<String, PtmOffline>();
+	
+	public void clear(){
+		overSpeedendMap.clear();
+		offlineMap.clear();
+	}
 	
 	public void putLastRecord(VehicleLocate l){
 		lastRecordMap.put(l.getCode(),l);
 	}
 	
-	public void overSpeedAnalysis(VehicleLocate entity)  throws Exception{
+	public void overSpeedAnalysis(VehicleLocate entity) {
+		try{
 		PtmOverSpeed overspeed = instance.overSpeedingMap.get(entity.getCode());
 		if(overspeed==null){
 			if(entity.isOverspeed()){
@@ -74,7 +82,11 @@ public class PtmAnalysisImp implements PtmAnalysis {
 				}
 				//key = code+beginTime
 				overSpeedendMap.put(entity.getCode()+overspeed.getBeginTime(), overspeed);
+				//overSpeedQueue.add(overspeed);
 			}
+		}
+		}catch(Exception e){
+			e.printStackTrace();
 		}
 	}
 
@@ -140,7 +152,11 @@ public class PtmAnalysisImp implements PtmAnalysis {
 	}
 	
 	public Map<String,PtmOverSpeed> getOverSpeedRecords(){
-		return instance.overSpeedendMap;
+		//return instance.overSpeedendMap;
+		//Map<String,PtmOverSpeed> map = new HashMap<String, PtmOverSpeed>();
+		//map = overSpeedendMap;
+		//overSpeedendMap.clear();
+		return overSpeedendMap;
 	}
 	
 	public Map<String,PtmOffline> getOffLineRecords(){
